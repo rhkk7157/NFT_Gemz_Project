@@ -26,7 +26,7 @@ const MintingModal: FC<MintingModalProps> = ({ isOpen, onClose }) => {
     try {
       if (!account || !caver || !mintGemContract) return;
 
-      const response = await caver.klay.sendTransaction({
+      const mintGemResponse = await caver.klay.sendTransaction({
         type: 'SMART_CONTRACT_EXECUTION',
         from: account,
         to: MINT_GEM_ADDRESS,
@@ -34,7 +34,14 @@ const MintingModal: FC<MintingModalProps> = ({ isOpen, onClose }) => {
         gas: '3000000',
         data: mintGemContract.methods.mintGemToken().encodeABI(),
       });
-      console.log(response);
+
+      if (mintGemResponse.status) {
+        const getTokenResponse = await mintGemContract.methods
+          .getLatestMintedGem(account)
+          .call();
+
+        console.log(getTokenResponse);
+      }
     } catch (error) {
       console.dir(error);
     }

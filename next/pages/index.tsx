@@ -1,8 +1,6 @@
 import { Button, Flex, useDisclosure } from '@chakra-ui/react';
 import type { NextPage } from 'next';
-import { useEffect } from 'react';
 import MintingModal from '../components/MintingModal';
-import { useCaver } from '../hooks';
 
 const Home: NextPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
