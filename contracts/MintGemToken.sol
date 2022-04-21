@@ -70,9 +70,9 @@ contract MintGemToken is ERC721Enumerable, Ownable {
   }
 
   function getLatestMintedGem(address _owner) public view returns (uint, uint) {
-    uint balanceLength = balanceOf(_owner); // address를 넣으면 그계정의 nft 갯수를 반환한다.
-    uint tokenId = tokenOfOwnerByIndex(_owner, balanceLength - 1);  // 갯수중 가장 마지막거를 가져온다. 즉, 가장 최근에 민팅한 것
+    uint balanceLength = balanceOf(_owner); 
+    uint tokenId = tokenOfOwnerByIndex(_owner, balanceLength - 1);
 
-    return (gemData[tokenId].gemRank, gemData[tokenId].gemType);  // 위에서 만들어놓은 맵핑을 사용한다.
+    return (gemData[tokenId].gemRank, gemData[tokenId].gemType);
   }
 }
