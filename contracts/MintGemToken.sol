@@ -69,10 +69,29 @@ contract MintGemToken is ERC721Enumerable, Ownable {
     _mint(msg.sender,tokenId);
   }
 
+  // 가장 최근 민팅한 NFT 조회
   function getLatestMintedGem(address _owner) public view returns (uint, uint) {
     uint balanceLength = balanceOf(_owner); 
     uint tokenId = tokenOfOwnerByIndex(_owner, balanceLength - 1);
 
     return (gemData[tokenId].gemRank, gemData[tokenId].gemType);
+  }
+
+  function getGemTokens(address _owner) public view returns (GemData[] memory) {
+    uint balanceLength = balanceOf(_owner);
+    
+    require(balanceLength != 0, "Token owner did not have token.");
+
+    GemData[] memory gemDataArray = new GemData[](balanceLength);
+
+    for (uint i = 0; i < balanceLength; i++) {
+      uint tokenId = tokenOfOwnerByIndex(_owner, i);
+      uint gemRank = gemData[tokenId].gemRank;
+      uint gemType = gemData[tokenId].gemType;
+
+      gemDataArray[i] = GemData(gemRank, gemType);
+    }
+
+    return gemDataArray;
   }
 }
