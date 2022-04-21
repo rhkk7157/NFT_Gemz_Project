@@ -1,5 +1,8 @@
 import {
+  Box,
   Button,
+  Flex,
+  Image,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -9,9 +12,11 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import { FC } from 'react';
+import axios from 'axios';
+import { FC, useState } from 'react';
 import { MINT_GEM_ADDRESS } from '../caverConfig';
 import { useAccount, useCaver } from '../hooks';
+import { IGem } from '../interfaces';
 
 interface MintingModalProps {
   isOpen: boolean;
@@ -19,12 +24,17 @@ interface MintingModalProps {
 }
 
 const MintingModal: FC<MintingModalProps> = ({ isOpen, onClose }) => {
+  const [metaDataURI, setMetaDataURI] = useState<IGem | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const { account } = useAccount();
   const { caver, mintGemContract } = useCaver();
 
   const onClickMint = async () => {
     try {
       if (!account || !caver || !mintGemContract) return;
+
+      setIsLoading(true);
 
       const mintGemResponse = await caver.klay.sendTransaction({
         type: 'SMART_CONTRACT_EXECUTION',
@@ -40,10 +50,16 @@ const MintingModal: FC<MintingModalProps> = ({ isOpen, onClose }) => {
           .getLatestMintedGem(account)
           .call();
 
-        console.log(getTokenResponse);
+        const metaDataResponse = await axios.get(
+          `${process.env.NEXT_PUBLIC_METADATA_URI}/${getTokenResponse[0]}/${getTokenResponse[1]}.json`
+        );
+        console.log(metaDataResponse);
+        setMetaDataURI(metaDataResponse.data);
       }
+      setIsLoading(false);
     } catch (error) {
       console.dir(error);
+      setIsLoading(false);
     }
   };
   return (
@@ -53,8 +69,26 @@ const MintingModal: FC<MintingModalProps> = ({ isOpen, onClose }) => {
         <ModalHeader>민팅하기</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text>민팅을 진행하시겠습니까?</Text>
-          <Text>(1 Klay가 소모됩니다.)</Text>
+          {metaDataURI ? (
+            <>
+              <Flex justifyContent="center">
+                <Box w={200}>
+                  <Image
+                    src={metaDataURI.image}
+                    alt="JoyGEMz"
+                    fallbackSrc="loading.png"
+                  />
+                  <Text>{metaDataURI.name}</Text>
+                  <Text>{metaDataURI.description}</Text>
+                </Box>
+              </Flex>
+            </>
+          ) : (
+            <>
+              <Text>민팅을 진행하시겠습니까?</Text>
+              <Text>(1 Klay가 소모됩니다.)</Text>
+            </>
+          )}
         </ModalBody>
 
         <ModalFooter>
@@ -63,6 +97,8 @@ const MintingModal: FC<MintingModalProps> = ({ isOpen, onClose }) => {
             variant="ghost"
             mr={2}
             onClick={onClickMint}
+            isLoading={isLoading}
+            disabled={isLoading}
           >
             민팅하기
           </Button>
