@@ -323,6 +323,37 @@ export const MINT_GEM_ABI: AbiItem[] = [
         type: 'address',
       },
     ],
+    name: 'getGemTokens',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'gemRank',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'gemType',
+            type: 'uint256',
+          },
+        ],
+        internalType: 'struct MintGemToken.GemData[]',
+        name: '',
+        type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_owner',
+        type: 'address',
+      },
+    ],
     name: 'getLatestMintedGem',
     outputs: [
       {
@@ -516,4 +547,4 @@ export const MINT_GEM_ABI: AbiItem[] = [
     type: 'function',
   },
 ];
-export const MINT_GEM_ADDRESS = '0x42A644E1c0b4fd4A6d9e2581Cda3d929DF488e5c';
+export const MINT_GEM_ADDRESS = '0x81BD3a09948DB43558FA135e7D76c444539B5935';

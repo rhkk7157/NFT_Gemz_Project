@@ -53,7 +53,7 @@ const MintingModal: FC<MintingModalProps> = ({ isOpen, onClose }) => {
         const metaDataResponse = await axios.get(
           `${process.env.NEXT_PUBLIC_METADATA_URI}/${getTokenResponse[0]}/${getTokenResponse[1]}.json`
         );
-        console.log(metaDataResponse);
+        // console.log(metaDataResponse);
         setMetaDataURI(metaDataResponse.data);
       }
       setIsLoading(false);
